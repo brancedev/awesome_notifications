@@ -504,7 +504,6 @@ public class AwesomeNotifications:
     private var _originalNotificationCenterDelegate: UNUserNotificationCenterDelegate?
 
     @objc public func didFinishLaunch(_ application: UIApplication) {
-
         _originalNotificationCenterDelegate = UNUserNotificationCenter.current().delegate
         UNUserNotificationCenter.current().delegate = self
 
@@ -538,9 +537,6 @@ public class AwesomeNotifications:
         withCompletionHandler completionHandler: @escaping () -> Void
     ){
         Logger.d(TAG, "Notification Category Identifier (action): \(response.notification.request.content.categoryIdentifier)")
-
-        Logger.d(TAG, "isAwesomeNotification = \(isAwesomeNotification(response.notification.request.content))")
-
 
         if !isAwesomeNotification(response.notification.request.content) {
              if let originalDelegate = _originalNotificationCenterDelegate {
@@ -626,9 +622,6 @@ public class AwesomeNotifications:
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ){
-
-        Logger.d(TAG, "Presenting: \(notification.request.content.userInfo),  \(isAwesomeNotification(response.notification.request.content))")
-
         if !isAwesomeNotification(notification.request.content) {
              if let originalDelegate = _originalNotificationCenterDelegate {
                  originalDelegate.userNotificationCenter?(

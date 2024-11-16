@@ -9,10 +9,9 @@ A complete solution to create Local Notifications and Push Notifications, throug
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Rafael Setragni' => 'rafaelsetra@gmail.com' }
   s.source           = { :path => '.' }
-  s.source_files     = 'Classes/**/*'
+  s.source_files     = 'Classes/**/*', 'AwnCore/**/*'
   s.static_framework = true
   s.dependency 'Flutter'
-  s.dependency 'IosAwnCore', '~> 0.10.0'
   s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
@@ -24,5 +23,5 @@ A complete solution to create Local Notifications and Push Notifications, throug
     'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64'
   }
   s.swift_version = '5.3'
-  
+
 end
