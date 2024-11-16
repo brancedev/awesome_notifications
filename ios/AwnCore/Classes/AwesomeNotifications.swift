@@ -505,8 +505,8 @@ public class AwesomeNotifications:
 
     @objc public func didFinishLaunch(_ application: UIApplication) {
 
+        _originalNotificationCenterDelegate = UNUserNotificationCenter.current().delegate
         UNUserNotificationCenter.current().delegate = self
-        _originalNotificationCenterDelegate = UIApplication.shared.delegate as? UNUserNotificationCenterDelegate
 
         RefreshSchedulesReceiver()
                 .refreshSchedules()
@@ -525,6 +525,12 @@ public class AwesomeNotifications:
         }
     }
 
+    private func isAwesomeNotification(_ content: UNNotificationContent) -> Bool {
+        let userInfo = content.userInfo
+        return userInfo[Definitions.NOTIFICATION_JSON] != nil ||
+               userInfo[Definitions.NOTIFICATION_MODEL_CONTENT] != nil
+    }
+
     @available(iOS 10.0, *)
     public func userNotificationCenter(
         _ center: UNUserNotificationCenter,
@@ -532,6 +538,22 @@ public class AwesomeNotifications:
         withCompletionHandler completionHandler: @escaping () -> Void
     ){
         Logger.d(TAG, "Notification Category Identifier (action): \(response.notification.request.content.categoryIdentifier)")
+
+        Logger.d(TAG, "isAwesomeNotification = \(isAwesomeNotification(response.notification.request.content))")
+
+
+        if !isAwesomeNotification(response.notification.request.content) {
+             if let originalDelegate = _originalNotificationCenterDelegate {
+                 originalDelegate.userNotificationCenter?(
+                     center,
+                     didReceive: response,
+                     withCompletionHandler: completionHandler)
+             } else {
+                 completionHandler()
+             }
+             return
+        }
+
         do {
             switch response.actionIdentifier {
 
@@ -604,6 +626,22 @@ public class AwesomeNotifications:
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ){
+
+        Logger.d(TAG, "Presenting: \(notification.request.content.userInfo),  \(isAwesomeNotification(response.notification.request.content))")
+
+        if !isAwesomeNotification(notification.request.content) {
+             if let originalDelegate = _originalNotificationCenterDelegate {
+                 originalDelegate.userNotificationCenter?(
+                     center,
+                     willPresent: notification,
+                     withCompletionHandler: completionHandler)
+             } else {
+                 // Default behavior if no delegate exists
+                 completionHandler([.alert, .badge, .sound])
+             }
+             return
+        }
+
         let jsonData:[String : Any?] =
                 extractNotificationJsonMap(
                     fromContent: notification.request.content)
