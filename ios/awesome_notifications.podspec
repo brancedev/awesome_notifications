@@ -10,7 +10,7 @@ A complete solution to create Local Notifications and Push Notifications, throug
   s.author           = { 'Rafael Setragni' => 'rafaelsetra@gmail.com' }
   s.source           = {
     :git => 'https://github.com/brancedev/IosAwnCoreAll.git',
-    :branch => 'fastic3'
+    :branch => 'fastic_v1'
  }
   s.source_files     = 'Classes/**/*'
   s.static_framework = true
